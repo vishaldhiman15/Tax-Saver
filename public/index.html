@@ -15,6 +15,9 @@
     <div class="bg-orb bg-orb-2"></div>
   </div>
 
+  <!-- Cursor Glow Trail -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+
   <!-- Particle Canvas -->
   <canvas id="particleCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;"></canvas>
 
@@ -24,12 +27,15 @@
       <div class="logo-icon">💰</div>
       <span>TaxSaver Pro</span>
     </a>
-    <ul class="nav-links">
+    <ul class="nav-links" id="navLinks">
       <li><a href="/" class="active">Home</a></li>
       <li><a href="/calculator">Calculator</a></li>
       <li><a href="/bank-connect">Bank Connect</a></li>
       <li><a href="/login" class="btn btn-primary btn-sm">Get Started</a></li>
     </ul>
+    <button class="nav-hamburger" id="navHamburger" onclick="toggleMobileNav()" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
 
   <!-- Hero Section -->
@@ -39,7 +45,7 @@
         ✨ India's #1 Tax Management Platform
       </div>
       <h1 class="animate-fade-in-up delay-1">
-        Save More on<br><span class="gradient-text" id="heroTitle">Your Taxes</span>
+        Save More on<br><span class="gradient-text hero-title-animated" id="heroTitle">Your Taxes</span>
       </h1>
       <p class="animate-fade-in-up delay-2">
         Connect your bank accounts, track every deduction, compare tax regimes instantly, and get AI-powered suggestions to maximize your savings. All in one beautiful dashboard.
@@ -213,9 +219,9 @@
     </div>
   </section>
 
-  <!-- CTA Section -->
+  <!-- CTA Section — Premium glassmorphic with animated border -->
   <section class="section" style="text-align: center;">
-    <div style="max-width: 640px; margin: 0 auto;">
+    <div class="cta-premium">
       <div class="section-tag" style="margin-bottom: var(--space-lg);">Get Started</div>
       <h2 style="font-size: 40px; margin-bottom: var(--space-md); letter-spacing: -0.03em;">Ready to <span class="gradient-text">Save Tax?</span></h2>
       <p style="color: var(--text-secondary); font-size: 17px; margin-bottom: var(--space-2xl); line-height: 1.7;">
@@ -267,7 +273,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© 2024 TaxSaver Pro. Smart Tax Management for India.</p>
+        <p>© <span id="footerYear">2025</span> TaxSaver Pro. Smart Tax Management for India.</p>
         <div class="footer-social">
           <a href="#" title="Twitter">𝕏</a>
           <a href="#" title="LinkedIn">in</a>
@@ -277,11 +283,74 @@
     </div>
   </footer>
 
+  <!-- Back to Top Button -->
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+    ↑
+  </button>
+
   <script>
+    // Dynamic footer year
+    document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+    // Mobile nav toggle
+    function toggleMobileNav() {
+      const nav = document.getElementById('navLinks');
+      const hamburger = document.getElementById('navHamburger');
+      nav.classList.toggle('mobile-open');
+      hamburger.classList.toggle('active');
+    }
+
+    // Close mobile nav on link click
+    document.querySelectorAll('#navLinks a').forEach(link => {
+      link.addEventListener('click', () => {
+        document.getElementById('navLinks').classList.remove('mobile-open');
+        document.getElementById('navHamburger').classList.remove('active');
+      });
+    });
+
     // Navbar scroll effect
     window.addEventListener('scroll', () => {
       document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+      // Back to top visibility
+      document.getElementById('backToTop').classList.toggle('visible', window.scrollY > 600);
     });
+
+    // Cursor glow trail (desktop only)
+    if (window.matchMedia('(pointer: fine)').matches) {
+      const glow = document.getElementById('cursorGlow');
+      let mouseX = 0, mouseY = 0, glowX = 0, glowY = 0;
+
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      });
+
+      function animateGlow() {
+        glowX += (mouseX - glowX) * 0.15;
+        glowY += (mouseY - glowY) * 0.15;
+        glow.style.transform = `translate(${glowX - 150}px, ${glowY - 150}px)`;
+        requestAnimationFrame(animateGlow);
+      }
+      animateGlow();
+    }
+
+    // Hero title text cycling animation
+    (() => {
+      const titles = ['Your Taxes', 'Your Wealth', 'Your Future', 'Your Savings'];
+      const el = document.getElementById('heroTitle');
+      let index = 0;
+
+      setInterval(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(15px)';
+        setTimeout(() => {
+          index = (index + 1) % titles.length;
+          el.textContent = titles[index];
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, 400);
+      }, 3000);
+    })();
 
     // Particle canvas
     (() => {
