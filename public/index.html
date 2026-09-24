@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tax Saver Pro — Smart Tax Management & Bank Connectivity</title>
+  <meta name="description" content="India's most premium tax management platform. Calculate taxes, connect banks, track deductions, and save more with AI-powered suggestions.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+</head>
+<body>
+  <!-- Animated Background -->
+  <div class="bg-animated">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+  </div>
+
+  <!-- Particle Canvas -->
+  <canvas id="particleCanvas" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;pointer-events:none;"></canvas>
+
+  <!-- Navbar -->
+  <nav class="navbar" id="navbar">
+    <a href="/" class="nav-logo">
+      <div class="logo-icon">💰</div>
+      <span>TaxSaver Pro</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="/" class="active">Home</a></li>
+      <li><a href="/calculator">Calculator</a></li>
+      <li><a href="/bank-connect">Bank Connect</a></li>
+      <li><a href="/login" class="btn btn-primary btn-sm">Get Started</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-badge animate-fade-in-up">
+        ✨ India's #1 Tax Management Platform
+      </div>
+      <h1 class="animate-fade-in-up delay-1">
+        Save More on<br><span class="gradient-text" id="heroTitle">Your Taxes</span>
+      </h1>
+      <p class="animate-fade-in-up delay-2">
+        Connect your bank accounts, track every deduction, compare tax regimes instantly, and get AI-powered suggestions to maximize your savings. All in one beautiful dashboard.
+      </p>
+      <div class="hero-buttons animate-fade-in-up delay-3">
+        <a href="/login" class="btn btn-primary btn-lg">
+          🚀 Start Saving Now
+        </a>
+        <a href="/calculator" class="btn btn-secondary btn-lg">
+          🧮 Try Calculator
+        </a>
+      </div>
+
+      <!-- Trust Badges -->
+      <div class="trust-badges animate-fade-in-up delay-4">
+        <div class="trust-badge">
+          <span class="badge-icon">🔒</span>
+          <span>256-bit Encrypted</span>
+        </div>
+        <div class="trust-badge">
+          <span class="badge-icon">🏦</span>
+          <span>RBI Compliant</span>
+        </div>
+        <div class="trust-badge">
+          <span class="badge-icon">⚡</span>
+          <span>Instant Sync</span>
+        </div>
+      </div>
+
+      <div class="hero-stats animate-fade-in-up delay-5">
+        <div class="hero-stat">
+          <div class="stat-number" data-target="50000">0</div>
+          <div class="stat-text">Users Trust Us</div>
+        </div>
+        <div class="hero-stat">
+          <div class="stat-number" data-target="120" data-prefix="₹" data-suffix="Cr+">₹0Cr+</div>
+          <div class="stat-text">Taxes Saved</div>
+        </div>
+        <div class="hero-stat">
+          <div class="stat-number" data-target="20" data-suffix="+">0+</div>
+          <div class="stat-text">Banks Connected</div>
+        </div>
+        <div class="hero-stat">
+          <div class="stat-number" data-target="4.9" data-suffix="★" data-decimal="true">0★</div>
+          <div class="stat-text">User Rating</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="section" id="features">
+    <div class="section-header">
+      <div class="section-tag">Features</div>
+      <h2>Everything You Need to <span class="gradient-text">Save Tax</span></h2>
+      <p>Powerful tools designed to make tax planning effortless and rewarding</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card animate-fade-in-up">
+        <div class="feature-icon">🧮</div>
+        <h3>Smart Tax Calculator</h3>
+        <p>Compare Old vs New regime instantly with real-time calculations. See exactly how much you save with each deduction.</p>
+      </div>
+      <div class="feature-card animate-fade-in-up delay-1">
+        <div class="feature-icon">🏦</div>
+        <h3>Bank Connect</h3>
+        <p>Link any Indian bank account securely. Auto-import transactions and categorize them for tax deductions.</p>
+      </div>
+      <div class="feature-card animate-fade-in-up delay-2">
+        <div class="feature-icon">💡</div>
+        <h3>AI Tax Suggestions</h3>
+        <p>Get personalized recommendations to maximize your deductions under Section 80C, 80D, HRA, and more.</p>
+      </div>
+      <div class="feature-card animate-fade-in-up delay-3">
+        <div class="feature-icon">📊</div>
+        <h3>Visual Tax Breakdown</h3>
+        <p>Beautiful charts and graphs showing your tax liability, deductions, and savings at a glance.</p>
+      </div>
+      <div class="feature-card animate-fade-in-up delay-4">
+        <div class="feature-icon">📱</div>
+        <h3>Transaction Tracker</h3>
+        <p>Track all your income and expenses. Automatically flag tax-deductible transactions for easy filing.</p>
+      </div>
+      <div class="feature-card animate-fade-in-up delay-5">
+        <div class="feature-icon">🔐</div>
+        <h3>Bank-Grade Security</h3>
+        <p>256-bit encryption, JWT authentication, and secure bank connections. Your data is always protected.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="section" style="background: rgba(16, 185, 129, 0.02);">
+    <div class="section-header">
+      <div class="section-tag">How It Works</div>
+      <h2>Three Simple <span class="gradient-text">Steps</span></h2>
+      <p>Start saving on taxes in under 2 minutes</p>
+    </div>
+    <div class="features-grid" style="max-width: 960px;">
+      <div class="feature-card animate-fade-in-up" style="text-align: center;">
+        <div class="feature-icon" style="margin: 0 auto var(--space-lg); font-size: 32px; width: 76px; height: 76px; background: hsla(160, 84%, 39%, 0.1); border-color: hsla(160, 84%, 39%, 0.2);">1️⃣</div>
+        <h3>Connect Your Bank</h3>
+        <p>Securely link your bank accounts in seconds. We support 20+ major Indian banks.</p>
+      </div>
+      <div class="feature-card animate-fade-in-up delay-1" style="text-align: center;">
+        <div class="feature-icon" style="margin: 0 auto var(--space-lg); font-size: 32px; width: 76px; height: 76px; background: hsla(217, 91%, 60%, 0.1); border-color: hsla(217, 91%, 60%, 0.2);">2️⃣</div>
+        <h3>Auto-Analyze</h3>
+        <p>We automatically categorize your transactions and identify tax-saving opportunities.</p>
+      </div>
+      <div class="feature-card animate-fade-in-up delay-2" style="text-align: center;">
+        <div class="feature-icon" style="margin: 0 auto var(--space-lg); font-size: 32px; width: 76px; height: 76px; background: hsla(258, 90%, 66%, 0.1); border-color: hsla(258, 90%, 66%, 0.2);">3️⃣</div>
+        <h3>Save More</h3>
+        <p>Follow personalized suggestions and file taxes with maximum deductions claimed.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section" id="testimonials">
+    <div class="section-header">
+      <div class="section-tag">Testimonials</div>
+      <h2>Loved by <span class="gradient-text">50,000+</span> Indians</h2>
+      <p>See what our users are saying about their tax-saving journey</p>
+    </div>
+    <div class="features-grid" style="max-width: 1100px;">
+      <div class="testimonial-card animate-fade-in-up">
+        <div class="testimonial-stars">★★★★★</div>
+        <div class="testimonial-text">"TaxSaver Pro saved me ₹1.8 lakhs last year! The bank connect feature automatically found deductions I was missing. Absolutely brilliant product."</div>
+        <div class="testimonial-author">
+          <div class="author-avatar">RS</div>
+          <div>
+            <div class="author-name">Rahul Sharma</div>
+            <div class="author-role">Software Engineer, Bengaluru</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card animate-fade-in-up delay-1">
+        <div class="testimonial-stars">★★★★★</div>
+        <div class="testimonial-text">"The Old vs New regime comparison made my decision so easy. I switched to the Old regime and saved ₹95,000. The UI is gorgeous too!"</div>
+        <div class="testimonial-author">
+          <div class="author-avatar">PA</div>
+          <div>
+            <div class="author-name">Priya Agarwal</div>
+            <div class="author-role">Product Manager, Mumbai</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card animate-fade-in-up delay-2">
+        <div class="testimonial-stars">★★★★★</div>
+        <div class="testimonial-text">"Finally a tax app that doesn't feel like doing taxes! Connected my HDFC and SBI in seconds. The AI suggestions are incredibly helpful."</div>
+        <div class="testimonial-author">
+          <div class="author-avatar">AK</div>
+          <div>
+            <div class="author-name">Amit Kumar</div>
+            <div class="author-role">CA, Delhi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bank Partners -->
+  <section class="section" id="banks">
+    <div class="section-header">
+      <div class="section-tag">Bank Partners</div>
+      <h2>Connect With <span class="gradient-text">Any Bank</span></h2>
+      <p>We support all major Indian banks for seamless integration</p>
+    </div>
+    <div class="banks-scroll" id="bankScroll" style="max-width: 1200px; margin: 0 auto; justify-content: center; flex-wrap: wrap;">
+      <!-- Banks loaded dynamically -->
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="section" style="text-align: center;">
+    <div style="max-width: 640px; margin: 0 auto;">
+      <div class="section-tag" style="margin-bottom: var(--space-lg);">Get Started</div>
+      <h2 style="font-size: 40px; margin-bottom: var(--space-md); letter-spacing: -0.03em;">Ready to <span class="gradient-text">Save Tax?</span></h2>
+      <p style="color: var(--text-secondary); font-size: 17px; margin-bottom: var(--space-2xl); line-height: 1.7;">
+        Join 50,000+ Indians who are saving more on taxes every year with TaxSaver Pro. It's free to start.
+      </p>
+      <div class="flex justify-center gap-md" style="margin-bottom: var(--space-2xl);">
+        <a href="/login" class="btn btn-primary btn-lg">🚀 Get Started Free</a>
+        <a href="/calculator" class="btn btn-secondary btn-lg">Try Calculator</a>
+      </div>
+      <div class="trust-badges" style="border-top: 1px solid var(--border-color); padding-top: var(--space-xl);">
+        <div class="trust-badge"><span class="badge-icon">✅</span><span>No Credit Card Required</span></div>
+        <div class="trust-badge"><span class="badge-icon">🔒</span><span>Bank-Grade Security</span></div>
+        <div class="trust-badge"><span class="badge-icon">📱</span><span>Works on All Devices</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <div class="nav-logo" style="margin-bottom: var(--space-lg);">
+            <div class="logo-icon">💰</div>
+            <span>TaxSaver Pro</span>
+          </div>
+          <p>India's most loved tax management platform. Save more, worry less.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <a href="/calculator">Tax Calculator</a>
+          <a href="/bank-connect">Bank Connect</a>
+          <a href="/dashboard">Dashboard</a>
+          <a href="/transactions">Transactions</a>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookie Policy</a>
+          <a href="#">Disclaimer</a>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <a href="#">support@taxsaverpro.in</a>
+          <a href="#">Twitter / X</a>
+          <a href="#">LinkedIn</a>
+          <a href="#">Instagram</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 TaxSaver Pro. Smart Tax Management for India.</p>
+        <div class="footer-social">
+          <a href="#" title="Twitter">𝕏</a>
+          <a href="#" title="LinkedIn">in</a>
+          <a href="#" title="GitHub">⌘</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Particle canvas
+    (() => {
+      const canvas = document.getElementById('particleCanvas');
+      const ctx = canvas.getContext('2d');
+      let w, h, particles = [];
+
+      function resize() {
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      class Particle {
+        constructor() {
+          this.reset();
+        }
+        reset() {
+          this.x = Math.random() * w;
+          this.y = Math.random() * h;
+          this.size = Math.random() * 1.5 + 0.5;
+          this.speedX = (Math.random() - 0.5) * 0.3;
+          this.speedY = (Math.random() - 0.5) * 0.3;
+          this.opacity = Math.random() * 0.3 + 0.1;
+        }
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          if (this.x < 0 || this.x > w || this.y < 0 || this.y > h) this.reset();
+        }
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(16, 185, 129, ${this.opacity})`;
+          ctx.fill();
+        }
+      }
+
+      for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+      function animate() {
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach(p => { p.update(); p.draw(); });
+
+        // Draw connections
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 150) {
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(16, 185, 129, ${0.05 * (1 - dist / 150)})`;
+              ctx.lineWidth = 0.5;
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(animate);
+      }
+      animate();
+    })();
+
+    // Animated counter for hero stats
+    function animateCounters() {
+      document.querySelectorAll('.hero-stat .stat-number[data-target]').forEach(el => {
+        const target = parseFloat(el.dataset.target);
+        const prefix = el.dataset.prefix || '';
+        const suffix = el.dataset.suffix || '';
+        const isDecimal = el.dataset.decimal === 'true';
+        const duration = 2000;
+        const start = performance.now();
+
+        function update(now) {
+          const elapsed = now - start;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 4); // ease-out-quart
+          let current = target * eased;
+
+          if (isDecimal) {
+            el.textContent = prefix + current.toFixed(1) + suffix;
+          } else if (target >= 1000) {
+            el.textContent = prefix + Math.floor(current).toLocaleString('en-IN') + (suffix || '+');
+          } else {
+            el.textContent = prefix + Math.floor(current) + suffix;
+          }
+
+          if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+      });
+    }
+
+    // Load bank partners
+    fetch('/api/bank/list')
+      .then(r => r.json())
+      .then(banks => {
+        const scroll = document.getElementById('bankScroll');
+        banks.forEach(bank => {
+          const el = document.createElement('div');
+          el.className = 'bank-partner';
+          el.innerHTML = `<span style="color: ${bank.color}">${bank.shortName}</span>`;
+          scroll.appendChild(el);
+        });
+      })
+      .catch(() => {});
+
+    // Intersection Observer for animations + counter trigger
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animationPlayState = 'running';
+          // Trigger counters when hero stats are visible
+          if (entry.target.closest('.hero-stats')) {
+            animateCounters();
+          }
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-fade-in-up, .animate-slide-in-left, .hero-stats').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Also observe hero stats wrapper
+    const heroStats = document.querySelector('.hero-stats');
+    if (heroStats) observer.observe(heroStats);
+  </script>
+</body>
+</html>

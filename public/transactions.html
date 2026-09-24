@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transactions — TaxSaver Pro</title>
+  <meta name="description" content="View, filter, and categorize all your imported bank transactions. Track tax-deductible expenses.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+</head>
+<body>
+  <div class="bg-animated"><div class="bg-orb bg-orb-1"></div><div class="bg-orb bg-orb-2"></div></div>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">💰</div>
+      <h2>TaxSaver Pro</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="sidebar-link"><span class="link-icon">📊</span> Dashboard</a>
+      <a href="/calculator" class="sidebar-link"><span class="link-icon">🧮</span> Tax Calculator</a>
+      <a href="/bank-connect" class="sidebar-link"><span class="link-icon">🏦</span> Bank Connect <span class="link-badge">New</span></a>
+      <a href="/transactions" class="sidebar-link active"><span class="link-icon">💳</span> Transactions</a>
+      <div style="margin-top: auto; padding-top: var(--space-lg);">
+        <a href="#" class="sidebar-link" onclick="logout()"><span class="link-icon">🚪</span> Logout</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar" id="userAvatar">U</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">User</div>
+          <div class="user-email" id="userEmail">user@email.com</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <div class="page-header animate-fade-in-up">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-md);">
+        <div>
+          <h1>💳 <span class="gradient-text">Transactions</span></h1>
+          <p>View and manage all your imported bank transactions</p>
+        </div>
+        <button class="btn btn-secondary" onclick="exportCSV()" id="exportBtn" style="gap: 8px;">
+          <span>📥</span> Export CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="stats-grid animate-fade-in-up delay-1">
+      <div class="stat-card green">
+        <div class="stat-header">
+          <span class="stat-label">Total Credits</span>
+          <div class="stat-icon">💰</div>
+        </div>
+        <div class="stat-value" id="totalCredits">₹0</div>
+        <div class="stat-change positive">Income</div>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-header">
+          <span class="stat-label">Total Debits</span>
+          <div class="stat-icon">💸</div>
+        </div>
+        <div class="stat-value" id="totalDebits">₹0</div>
+        <div class="stat-change negative">Expenses</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-header">
+          <span class="stat-label">Tax Deductible</span>
+          <div class="stat-icon">🏷️</div>
+        </div>
+        <div class="stat-value" id="totalTaxDeductible">₹0</div>
+        <div class="stat-change positive">Claimable</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-header">
+          <span class="stat-label">Transactions</span>
+          <div class="stat-icon">📝</div>
+        </div>
+        <div class="stat-value" id="totalCount">0</div>
+        <div class="stat-change">Total</div>
+      </div>
+    </div>
+
+    <!-- Category Distribution -->
+    <div class="card animate-fade-in-up delay-2" style="margin-bottom: var(--space-xl);" id="categoryChartCard">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-lg);">
+        <h3>📊 Spending Distribution</h3>
+        <span class="badge badge-info" id="categoryCount">0 categories</span>
+      </div>
+      <div id="categoryBars" style="display: flex; flex-direction: column; gap: var(--space-sm);"></div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-bar animate-fade-in-up delay-3">
+      <div class="search-bar" style="flex: 1; max-width: 320px;">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search transactions..." id="txnSearch" oninput="applyFilters()">
+      </div>
+      <select class="filter-select" id="filterType" onchange="applyFilters()">
+        <option value="">All Types</option>
+        <option value="credit">Credits Only</option>
+        <option value="debit">Debits Only</option>
+      </select>
+      <select class="filter-select" id="filterCategory" onchange="applyFilters()">
+        <option value="">All Categories</option>
+        <option value="Salary">Salary</option>
+        <option value="Investment">Investment</option>
+        <option value="Insurance">Insurance</option>
+        <option value="Rent">Rent</option>
+        <option value="Shopping">Shopping</option>
+        <option value="Food">Food</option>
+        <option value="Travel">Travel</option>
+        <option value="Medical">Medical</option>
+        <option value="Education">Education</option>
+        <option value="Utilities">Utilities</option>
+        <option value="Entertainment">Entertainment</option>
+        <option value="Donations">Donations</option>
+      </select>
+      <select class="filter-select" id="filterTaxDeductible" onchange="applyFilters()">
+        <option value="">Tax Status</option>
+        <option value="true">Tax Deductible</option>
+        <option value="false">Non-Deductible</option>
+      </select>
+    </div>
+
+    <!-- Transactions List -->
+    <div class="card animate-fade-in-up delay-4">
+      <div class="flex items-center justify-between" style="margin-bottom: var(--space-lg);">
+        <h3>All Transactions</h3>
+        <span class="badge badge-info" id="filteredCount">0 results</span>
+      </div>
+      <div id="transactionsList">
+        <div class="empty-state">
+          <div class="empty-icon">💳</div>
+          <h3>No Transactions Found</h3>
+          <p>Connect a bank account to import transactions automatically.</p>
+          <a href="/bank-connect" class="btn btn-primary" style="margin-top: var(--space-lg);">Connect Bank →</a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user.name) {
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+
+    function showToast(msg, type = 'info') {
+      const c = document.getElementById('toastContainer');
+      const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+      const t = document.createElement('div');
+      t.className = `toast ${type}`;
+      t.innerHTML = `<span class="toast-icon">${icons[type]}</span><span class="toast-msg">${msg}</span>`;
+      c.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 4000);
+    }
+
+    function formatCurrency(num) {
+      return '₹' + Number(num).toLocaleString('en-IN');
+    }
+
+    let allTransactions = [];
+
+    const categoryIcons = {
+      'Salary': '💼', 'Investment': '📈', 'Insurance': '🛡️', 'Rent': '🏠',
+      'Shopping': '🛒', 'Food': '🍔', 'Travel': '✈️', 'Medical': '🏥',
+      'Education': '🎓', 'Utilities': '⚡', 'Entertainment': '🎬', 'Donations': '🤝'
+    };
+
+    const categoryColors = {
+      'Salary': 'hsl(160, 84%, 39%)', 'Investment': 'hsl(217, 91%, 60%)', 'Insurance': 'hsl(258, 90%, 66%)', 'Rent': 'hsl(38, 92%, 50%)',
+      'Shopping': 'hsl(330, 81%, 60%)', 'Food': 'hsl(25, 95%, 53%)', 'Travel': 'hsl(187, 92%, 43%)', 'Medical': 'hsl(0, 84%, 60%)',
+      'Education': 'hsl(270, 76%, 60%)', 'Utilities': 'hsl(45, 93%, 58%)', 'Entertainment': 'hsl(330, 81%, 60%)', 'Donations': 'hsl(160, 84%, 39%)'
+    };
+
+    async function loadTransactions() {
+      try {
+        const res = await fetch('/api/bank/transactions');
+        allTransactions = await res.json();
+        updateSummary(allTransactions);
+        renderTransactions(allTransactions);
+        renderCategoryChart(allTransactions);
+      } catch(e) {
+        console.error('Failed to load transactions');
+      }
+    }
+
+    function updateSummary(txns) {
+      const credits = txns.filter(t => t.type === 'credit').reduce((sum, t) => sum + t.amount, 0);
+      const debits = txns.filter(t => t.type === 'debit').reduce((sum, t) => sum + t.amount, 0);
+      const taxDed = txns.filter(t => t.taxDeductible).reduce((sum, t) => sum + t.amount, 0);
+
+      document.getElementById('totalCredits').textContent = formatCurrency(credits);
+      document.getElementById('totalDebits').textContent = formatCurrency(debits);
+      document.getElementById('totalTaxDeductible').textContent = formatCurrency(taxDed);
+      document.getElementById('totalCount').textContent = txns.length;
+    }
+
+    function renderCategoryChart(txns) {
+      const debits = txns.filter(t => t.type === 'debit');
+      const categories = {};
+      debits.forEach(t => {
+        categories[t.category] = (categories[t.category] || 0) + t.amount;
+      });
+
+      const sorted = Object.entries(categories).sort((a, b) => b[1] - a[1]);
+      const maxAmount = sorted.length > 0 ? sorted[0][1] : 1;
+      const container = document.getElementById('categoryBars');
+      const countEl = document.getElementById('categoryCount');
+      countEl.textContent = sorted.length + ' categories';
+
+      if (sorted.length === 0) {
+        container.innerHTML = '<p style="color: var(--text-muted); font-size: 13px; text-align: center; padding: var(--space-md);">No spending data available yet.</p>';
+        return;
+      }
+
+      container.innerHTML = sorted.slice(0, 6).map(([cat, amount]) => {
+        const pct = Math.round((amount / maxAmount) * 100);
+        const color = categoryColors[cat] || 'hsl(217, 91%, 60%)';
+        const icon = categoryIcons[cat] || '💳';
+        return `
+          <div style="display: flex; align-items: center; gap: var(--space-md);">
+            <div style="font-size: 18px; width: 28px; text-align: center;">${icon}</div>
+            <div style="flex: 1;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="font-size: 13px; font-weight: 600;">${cat}</span>
+                <span style="font-size: 13px; font-weight: 600; font-family: 'Outfit', sans-serif; color: ${color};">${formatCurrency(amount)}</span>
+              </div>
+              <div style="height: 6px; background: var(--bg-card); border-radius: var(--radius-full); overflow: hidden;">
+                <div style="width: ${pct}%; height: 100%; background: ${color}; border-radius: var(--radius-full); transition: width 1.2s cubic-bezier(0.19, 1, 0.22, 1); box-shadow: 0 0 8px ${color}40;"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderTransactions(txns) {
+      const container = document.getElementById('transactionsList');
+      document.getElementById('filteredCount').textContent = txns.length + ' results';
+
+      if (txns.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="padding: var(--space-lg);">
+            <div class="empty-icon">🔍</div>
+            <h3>No Matching Transactions</h3>
+            <p>Try adjusting your filters or connect a bank to import transactions.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = txns.map((txn, i) => {
+        const date = new Date(txn.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        const isCredit = txn.type === 'credit';
+        const icon = categoryIcons[txn.category] || '💳';
+        return `
+          <div class="txn-row" style="animation: fadeInUp 0.4s ${i * 0.03}s both cubic-bezier(0.19, 1, 0.22, 1);">
+            <div class="txn-icon ${txn.type}">${isCredit ? '↓' : '↑'}</div>
+            <div class="txn-details">
+              <div class="txn-title">${icon} ${txn.description}</div>
+              <div class="txn-meta">
+                <span style="background: ${txn.bankColor}18; color: ${txn.bankColor}; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;">${txn.bankName}</span>
+                <span>${txn.category}</span>
+                <span>•</span>
+                <span>${date}</span>
+                ${txn.merchant ? `<span>• ${txn.merchant}</span>` : ''}
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px;">
+              <div class="txn-amount ${txn.type}">
+                ${isCredit ? '+' : '-'}${formatCurrency(txn.amount)}
+              </div>
+              ${txn.taxDeductible ? '<span class="badge badge-success" style="padding: 3px 10px; font-size: 10px;">Tax Deductible</span>' : '<span class="badge badge-purple" style="padding: 3px 10px; font-size: 10px;">Non-Deductible</span>'}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function applyFilters() {
+      const search = document.getElementById('txnSearch').value.toLowerCase();
+      const type = document.getElementById('filterType').value;
+      const category = document.getElementById('filterCategory').value;
+      const taxDeductible = document.getElementById('filterTaxDeductible').value;
+
+      let filtered = [...allTransactions];
+      if (search) filtered = filtered.filter(t => 
+        t.description.toLowerCase().includes(search) || 
+        t.category.toLowerCase().includes(search) || 
+        t.bankName.toLowerCase().includes(search) ||
+        (t.merchant && t.merchant.toLowerCase().includes(search))
+      );
+      if (type) filtered = filtered.filter(t => t.type === type);
+      if (category) filtered = filtered.filter(t => t.category === category);
+      if (taxDeductible) filtered = filtered.filter(t => t.taxDeductible === (taxDeductible === 'true'));
+
+      updateSummary(filtered);
+      renderTransactions(filtered);
+      renderCategoryChart(filtered);
+    }
+
+    function exportCSV() {
+      if (allTransactions.length === 0) {
+        showToast('No transactions to export', 'warning');
+        return;
+      }
+
+      const headers = ['Date', 'Description', 'Bank', 'Category', 'Type', 'Amount', 'Tax Deductible', 'Merchant'];
+      const rows = allTransactions.map(t => [
+        new Date(t.date).toLocaleDateString('en-IN'),
+        t.description,
+        t.bankName,
+        t.category,
+        t.type,
+        t.amount,
+        t.taxDeductible ? 'Yes' : 'No',
+        t.merchant || ''
+      ]);
+
+      const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `taxsaver_transactions_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSV exported successfully! 📥', 'success');
+    }
+
+    // Init
+    loadTransactions();
+  </script>
+</body>
+</html>

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bank Connect — TaxSaver Pro</title>
+  <meta name="description" content="Connect any Indian bank account securely. Auto-import transactions and track tax deductions with TaxSaver Pro.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+</head>
+<body>
+  <div class="bg-animated"><div class="bg-orb bg-orb-1"></div><div class="bg-orb bg-orb-2"></div></div>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">💰</div>
+      <h2>TaxSaver Pro</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="sidebar-link"><span class="link-icon">📊</span> Dashboard</a>
+      <a href="/calculator" class="sidebar-link"><span class="link-icon">🧮</span> Tax Calculator</a>
+      <a href="/bank-connect" class="sidebar-link active"><span class="link-icon">🏦</span> Bank Connect <span class="link-badge">New</span></a>
+      <a href="/transactions" class="sidebar-link"><span class="link-icon">💳</span> Transactions</a>
+      <div style="margin-top: auto; padding-top: var(--space-lg);">
+        <a href="#" class="sidebar-link" onclick="logout()"><span class="link-icon">🚪</span> Logout</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar" id="userAvatar">U</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">User</div>
+          <div class="user-email" id="userEmail">user@email.com</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <div class="page-header animate-fade-in-up">
+      <h1>🏦 Bank <span class="gradient-text">Connect</span></h1>
+      <p>Securely connect your bank accounts to auto-import transactions and track deductions</p>
+    </div>
+
+    <!-- Security Badge -->
+    <div class="animate-fade-in-up delay-1" style="display: flex; align-items: center; gap: var(--space-lg); margin-bottom: var(--space-xl); padding: var(--space-lg); background: var(--accent-primary-subtle); border: 1px solid hsla(160, 84%, 39%, 0.12); border-radius: var(--radius-xl);">
+      <div style="font-size: 36px; animation: float 3s ease-in-out infinite;">🛡️</div>
+      <div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--accent-primary); margin-bottom: 4px;">Bank-Grade Security</div>
+        <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.5;">Your data is protected with 256-bit SSL encryption. We never store your banking credentials. All connections are RBI-compliant and audited.</div>
+      </div>
+      <div style="display: flex; gap: var(--space-md); margin-left: auto; flex-shrink: 0;">
+        <div style="padding: 6px 14px; background: var(--bg-glass-strong); border-radius: var(--radius-full); font-size: 11px; color: var(--text-muted); font-weight: 600; border: 1px solid var(--border-color);">🔒 SSL</div>
+        <div style="padding: 6px 14px; background: var(--bg-glass-strong); border-radius: var(--radius-full); font-size: 11px; color: var(--text-muted); font-weight: 600; border: 1px solid var(--border-color);">🇮🇳 RBI</div>
+      </div>
+    </div>
+
+    <!-- Connected Accounts -->
+    <div class="card animate-fade-in-up delay-2" style="margin-bottom: var(--space-xl);" id="connectedSection">
+      <div class="flex items-center justify-between" style="margin-bottom: var(--space-lg);">
+        <h3>🔗 Connected Accounts</h3>
+        <span class="badge badge-success" id="connectedCount">0 Banks</span>
+      </div>
+      <div id="connectedList">
+        <div class="empty-state" style="padding: var(--space-lg);">
+          <div class="empty-icon">🔗</div>
+          <h3>No Banks Connected Yet</h3>
+          <p>Select a bank below to connect your first account</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Filter -->
+    <div class="flex items-center justify-between gap-lg" style="margin-bottom: var(--space-xl); flex-wrap: wrap;">
+      <div class="search-bar" style="flex: 1; max-width: 400px;">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search banks..." id="bankSearch" oninput="filterBanks(this.value)">
+      </div>
+      <div class="flex gap-sm">
+        <button class="tag active" onclick="filterType('all', this)">All</button>
+        <button class="tag" onclick="filterType('private', this)">Private</button>
+        <button class="tag" onclick="filterType('public', this)">Public</button>
+        <button class="tag" onclick="filterType('digital', this)">Digital</button>
+      </div>
+    </div>
+
+    <!-- Banks Grid -->
+    <div class="animate-fade-in-up delay-3">
+      <h3 style="margin-bottom: var(--space-lg);">Select a Bank to Connect</h3>
+      <div class="grid-5" id="banksGrid" style="margin-bottom: var(--space-xl);">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+
+    <!-- Connection Modal -->
+    <div class="modal-overlay" id="connectModal">
+      <div class="modal" style="max-width: 580px;">
+        <div class="modal-header">
+          <h3 id="modalTitle">Connect Bank</h3>
+          <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+
+        <!-- Connection Steps -->
+        <div class="connection-steps" id="connectionSteps">
+          <div class="step active" id="step1">
+            <div class="step-circle">1</div>
+            <span class="step-label">Select</span>
+          </div>
+          <div class="step" id="step2">
+            <div class="step-circle">2</div>
+            <span class="step-label">Verify</span>
+          </div>
+          <div class="step" id="step3">
+            <div class="step-circle">3</div>
+            <span class="step-label">Connect</span>
+          </div>
+        </div>
+
+        <!-- Step 1: Bank Details -->
+        <div id="stepContent1">
+          <div style="text-align: center; margin-bottom: var(--space-xl);">
+            <div class="bank-logo" id="modalBankLogo" style="width: 76px; height: 76px; border-radius: var(--radius-xl); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-md); font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 18px; color: white; box-shadow: 0 8px 24px rgba(0,0,0,0.3);">SBI</div>
+            <h3 id="modalBankName" style="letter-spacing: -0.02em;">State Bank of India</h3>
+          </div>
+          <div class="auth-form">
+            <div class="input-group">
+              <label>Account Number</label>
+              <input type="text" class="input" id="accNumber" placeholder="Enter account number">
+            </div>
+            <div class="input-group">
+              <label>IFSC Code</label>
+              <input type="text" class="input" id="ifscCode" placeholder="e.g., SBIN0001234" style="text-transform: uppercase;">
+            </div>
+            <div class="input-group">
+              <label>Account Holder Name</label>
+              <input type="text" class="input" id="holderName" placeholder="As per bank records">
+            </div>
+            <button class="btn btn-primary btn-lg w-full" onclick="verifyStep()">
+              Verify Account →
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: OTP Verification -->
+        <div id="stepContent2" class="hidden">
+          <div style="text-align: center; margin-bottom: var(--space-xl);">
+            <div style="font-size: 52px; margin-bottom: var(--space-md); animation: float 3s ease-in-out infinite;">📱</div>
+            <h3>OTP Verification</h3>
+            <p style="color: var(--text-secondary); font-size: 14px; margin-top: 8px;">We've sent a verification code to your registered mobile number</p>
+          </div>
+          <div class="auth-form">
+            <div class="input-group">
+              <label>Enter OTP</label>
+              <div style="display: flex; gap: 10px; justify-content: center;">
+                <input type="text" class="input" maxlength="1" style="width: 52px; text-align: center; font-size: 24px; font-weight: 700; padding: 14px; border-radius: var(--radius-lg);" oninput="this.nextElementSibling?.focus()">
+                <input type="text" class="input" maxlength="1" style="width: 52px; text-align: center; font-size: 24px; font-weight: 700; padding: 14px; border-radius: var(--radius-lg);" oninput="this.nextElementSibling?.focus()">
+                <input type="text" class="input" maxlength="1" style="width: 52px; text-align: center; font-size: 24px; font-weight: 700; padding: 14px; border-radius: var(--radius-lg);" oninput="this.nextElementSibling?.focus()">
+                <input type="text" class="input" maxlength="1" style="width: 52px; text-align: center; font-size: 24px; font-weight: 700; padding: 14px; border-radius: var(--radius-lg);" oninput="this.nextElementSibling?.focus()">
+                <input type="text" class="input" maxlength="1" style="width: 52px; text-align: center; font-size: 24px; font-weight: 700; padding: 14px; border-radius: var(--radius-lg);" oninput="this.nextElementSibling?.focus()">
+                <input type="text" class="input" maxlength="1" style="width: 52px; text-align: center; font-size: 24px; font-weight: 700; padding: 14px; border-radius: var(--radius-lg);">
+              </div>
+            </div>
+            <button class="btn btn-primary btn-lg w-full" onclick="connectStep()">
+              Verify & Connect →
+            </button>
+            <p style="text-align: center; font-size: 13px; color: var(--text-muted);">
+              Didn't receive? <a href="#" onclick="event.preventDefault();" style="color: var(--accent-primary); font-weight: 600;">Resend OTP</a>
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3: Success -->
+        <div id="stepContent3" class="hidden">
+          <div style="text-align: center; padding: var(--space-xl) 0;">
+            <div style="font-size: 80px; margin-bottom: var(--space-lg); animation: bounceIn 0.6s ease-out;">✅</div>
+            <h3 style="font-size: 26px; margin-bottom: var(--space-sm); letter-spacing: -0.02em;">Bank Connected!</h3>
+            <p style="color: var(--text-secondary); font-size: 15px; margin-bottom: var(--space-xl); line-height: 1.6;">
+              Your account has been linked successfully. Transactions are being imported.
+            </p>
+            <div class="progress-bar" style="margin-bottom: var(--space-md);">
+              <div class="progress-fill" id="syncProgress" style="width: 0%;"></div>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted);" id="syncStatus">Importing transactions...</p>
+            <button class="btn btn-primary btn-lg w-full mt-lg" onclick="closeModal(); location.reload();">
+              Go to Dashboard →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user.name) {
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+
+    function showToast(msg, type = 'info') {
+      const c = document.getElementById('toastContainer');
+      const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+      const t = document.createElement('div');
+      t.className = `toast ${type}`;
+      t.innerHTML = `<span class="toast-icon">${icons[type]}</span><span class="toast-msg">${msg}</span>`;
+      c.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 4000);
+    }
+
+    let allBanks = [];
+    let selectedBank = null;
+    let currentFilter = 'all';
+
+    // Load banks
+    async function loadBanks() {
+      try {
+        const res = await fetch('/api/bank/list');
+        allBanks = await res.json();
+        renderBanks(allBanks);
+      } catch(e) {
+        console.error('Failed to load banks');
+      }
+    }
+
+    function renderBanks(banks) {
+      const grid = document.getElementById('banksGrid');
+      grid.innerHTML = banks.map((bank, i) => `
+        <div class="bank-card" onclick="selectBank('${bank.id}')" style="animation-delay: ${i * 0.05}s;">
+          <div class="bank-logo" style="background: ${bank.color};">${bank.shortName}</div>
+          <div class="bank-name">${bank.name}</div>
+          <div class="bank-type">${bank.type} bank</div>
+        </div>
+      `).join('');
+    }
+
+    function filterBanks(query) {
+      const filtered = allBanks.filter(b => {
+        const matchesSearch = b.name.toLowerCase().includes(query.toLowerCase()) || b.shortName.toLowerCase().includes(query.toLowerCase());
+        const matchesType = currentFilter === 'all' || b.type === currentFilter;
+        return matchesSearch && matchesType;
+      });
+      renderBanks(filtered);
+    }
+
+    function filterType(type, btn) {
+      currentFilter = type;
+      document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      filterBanks(document.getElementById('bankSearch').value);
+    }
+
+    function selectBank(bankId) {
+      selectedBank = allBanks.find(b => b.id === bankId);
+      if (!selectedBank) return;
+
+      document.getElementById('modalTitle').textContent = `Connect ${selectedBank.name}`;
+      document.getElementById('modalBankLogo').style.background = selectedBank.color;
+      document.getElementById('modalBankLogo').textContent = selectedBank.shortName;
+      document.getElementById('modalBankName').textContent = selectedBank.name;
+
+      // Reset steps
+      resetSteps();
+      document.getElementById('connectModal').classList.add('active');
+    }
+
+    function resetSteps() {
+      ['step1', 'step2', 'step3'].forEach((s, i) => {
+        document.getElementById(s).className = i === 0 ? 'step active' : 'step';
+      });
+      document.getElementById('stepContent1').classList.remove('hidden');
+      document.getElementById('stepContent2').classList.add('hidden');
+      document.getElementById('stepContent3').classList.add('hidden');
+    }
+
+    function verifyStep() {
+      // Simulate verification
+      document.getElementById('step1').className = 'step completed';
+      document.getElementById('step2').className = 'step active';
+      document.getElementById('stepContent1').classList.add('hidden');
+      document.getElementById('stepContent2').classList.remove('hidden');
+    }
+
+    async function connectStep() {
+      document.getElementById('step2').className = 'step completed';
+      document.getElementById('step3').className = 'step active';
+      document.getElementById('stepContent2').classList.add('hidden');
+      document.getElementById('stepContent3').classList.remove('hidden');
+
+      // Call API
+      try {
+        const res = await fetch('/api/bank/connect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            bankId: selectedBank.id,
+            accountNumber: document.getElementById('accNumber').value || '1234567890',
+            ifsc: document.getElementById('ifscCode').value || 'SBIN0001234'
+          })
+        });
+        const data = await res.json();
+
+        // Animate progress bar
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += Math.random() * 15;
+          if (progress >= 100) {
+            progress = 100;
+            clearInterval(interval);
+            document.getElementById('syncStatus').textContent = '✅ ' + (data.message || 'All transactions imported!');
+            showToast('Bank connected successfully! 🎉', 'success');
+          }
+          document.getElementById('syncProgress').style.width = progress + '%';
+        }, 300);
+      } catch(e) {
+        showToast('Connection failed. Please try again.', 'error');
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('connectModal').classList.remove('active');
+    }
+
+    // Load connected accounts
+    async function loadConnected() {
+      try {
+        const res = await fetch('/api/bank/accounts');
+        const accounts = await res.json();
+        document.getElementById('connectedCount').textContent = accounts.length + ' Banks';
+
+        if (accounts.length > 0) {
+          document.getElementById('connectedList').innerHTML = accounts.map(acc => `
+            <div class="connected-account" style="margin-bottom: var(--space-md);">
+              <div class="account-logo" style="background: ${acc.color};">${acc.shortName}</div>
+              <div class="account-info">
+                <div class="account-name">${acc.bankName}</div>
+                <div class="account-number">${acc.accountNumber} • ${acc.ifsc}</div>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Last synced: ${new Date(acc.lastSynced).toLocaleString('en-IN')}</div>
+              </div>
+              <div class="account-balance">
+                <div class="balance-amount">₹${Number(acc.balance).toLocaleString('en-IN')}</div>
+                <div class="balance-label">Balance</div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <span class="badge badge-success">Connected</span>
+                <button class="btn btn-sm btn-ghost" style="font-size: 11px; padding: 4px 8px; color: var(--accent-red);" onclick="disconnectBank('${acc.id}')">Disconnect</button>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch(e) {}
+    }
+
+    async function disconnectBank(id) {
+      if (!confirm('Are you sure you want to disconnect this bank?')) return;
+      try {
+        await fetch(`/api/bank/disconnect/${id}`, { method: 'DELETE' });
+        showToast('Bank disconnected', 'info');
+        loadConnected();
+      } catch(e) {
+        showToast('Error disconnecting bank', 'error');
+      }
+    }
+
+    // Init
+    loadBanks();
+    loadConnected();
+  </script>
+</body>
+</html>

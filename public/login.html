@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — TaxSaver Pro</title>
+  <meta name="description" content="Sign in to your TaxSaver Pro account to manage taxes, track deductions, and connect banks.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+</head>
+<body>
+  <div class="bg-animated">
+    <div class="bg-orb bg-orb-1"></div>
+  </div>
+
+  <div class="auth-page">
+    <!-- Left: Form -->
+    <div class="auth-left">
+      <div class="auth-form-container animate-fade-in-up">
+        <a href="/" class="nav-logo" style="margin-bottom: var(--space-2xl);">
+          <div class="logo-icon">💰</div>
+          <span>TaxSaver Pro</span>
+        </a>
+
+        <!-- Login Form -->
+        <div id="loginView">
+          <h1>Welcome back</h1>
+          <p class="auth-subtitle">Sign in to continue saving on taxes</p>
+
+          <!-- Social Buttons -->
+          <div style="display: flex; flex-direction: column; gap: var(--space-sm); margin-bottom: var(--space-lg);">
+            <button class="btn-social" type="button">
+              <svg viewBox="0 0 24 24" width="20" height="20">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+              </svg>
+              Continue with Google
+            </button>
+            <button class="btn-social" type="button">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+              </svg>
+              Continue with Apple
+            </button>
+          </div>
+
+          <div class="auth-form">
+            <div style="display: flex; align-items: center; gap: var(--space-md); color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">
+              <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
+              or sign in with email
+              <div style="flex: 1; height: 1px; background: var(--border-color);"></div>
+            </div>
+          </div>
+
+          <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)" style="margin-top: var(--space-lg);">
+            <div class="input-group">
+              <label for="loginEmail">Email Address</label>
+              <div class="input-icon">
+                <span class="icon">📧</span>
+                <input type="email" id="loginEmail" class="input" placeholder="you@example.com" required>
+              </div>
+            </div>
+            <div class="input-group">
+              <label for="loginPassword">Password</label>
+              <div class="input-icon">
+                <span class="icon">🔒</span>
+                <input type="password" id="loginPassword" class="input" placeholder="••••••••" required>
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: var(--text-secondary);">
+                <input type="checkbox" style="accent-color: hsl(160, 84%, 39%); width: 16px; height: 16px;">
+                Remember me
+              </label>
+              <a href="#" style="font-size: 13px; color: var(--accent-primary); font-weight: 500;">Forgot password?</a>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-full" id="loginBtn">
+              Sign In →
+            </button>
+          </form>
+          <div class="auth-toggle">
+            Don't have an account? <a href="#" onclick="toggleAuth('register')">Create one</a>
+          </div>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerView" class="hidden">
+          <h1>Create Account</h1>
+          <p class="auth-subtitle">Start your tax-saving journey today</p>
+          <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
+            <div class="input-group">
+              <label for="regName">Full Name</label>
+              <div class="input-icon">
+                <span class="icon">👤</span>
+                <input type="text" id="regName" class="input" placeholder="Rahul Sharma" required>
+              </div>
+            </div>
+            <div class="input-group">
+              <label for="regEmail">Email Address</label>
+              <div class="input-icon">
+                <span class="icon">📧</span>
+                <input type="email" id="regEmail" class="input" placeholder="rahul@example.com" required>
+              </div>
+            </div>
+            <div class="input-group">
+              <label for="regPhone">Phone Number</label>
+              <div class="input-icon">
+                <span class="icon">📱</span>
+                <input type="tel" id="regPhone" class="input" placeholder="+91 98765 43210">
+              </div>
+            </div>
+            <div class="input-group">
+              <label for="regPan">PAN Number (Optional)</label>
+              <div class="input-icon">
+                <span class="icon">🆔</span>
+                <input type="text" id="regPan" class="input" placeholder="ABCDE1234F" maxlength="10" style="text-transform: uppercase;">
+              </div>
+            </div>
+            <div class="input-group">
+              <label for="regPassword">Password</label>
+              <div class="input-icon">
+                <span class="icon">🔒</span>
+                <input type="password" id="regPassword" class="input" placeholder="Min 6 characters" minlength="6" required oninput="updateStrength(this.value)">
+              </div>
+              <div class="strength-meter">
+                <div class="strength-fill" id="strengthFill"></div>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;" id="strengthLabel">Enter a password</div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-lg w-full" id="registerBtn">
+              Create Account →
+            </button>
+          </form>
+          <div class="auth-toggle">
+            Already have an account? <a href="#" onclick="toggleAuth('login')">Sign in</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Visual -->
+    <div class="auth-right">
+      <div class="auth-right-content animate-fade-in-up delay-2">
+        <div class="big-emoji">🏦</div>
+        <h2>Smart Tax Management</h2>
+        <p>Connect your banks, track deductions, compare tax regimes, and save lakhs on your taxes every year.</p>
+        <div style="display: flex; gap: var(--space-xl); margin-top: var(--space-2xl); justify-content: center;">
+          <div style="text-align: center; padding: var(--space-md) var(--space-lg); background: rgba(255,255,255,0.03); border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,0.06);">
+            <div style="font-size: 26px; font-weight: 800; color: var(--accent-primary); font-family: 'Outfit', sans-serif;">₹1.5L+</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500;">Avg. Savings</div>
+          </div>
+          <div style="text-align: center; padding: var(--space-md) var(--space-lg); background: rgba(255,255,255,0.03); border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,0.06);">
+            <div style="font-size: 26px; font-weight: 800; color: var(--accent-blue); font-family: 'Outfit', sans-serif;">20+</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500;">Banks Supported</div>
+          </div>
+          <div style="text-align: center; padding: var(--space-md) var(--space-lg); background: rgba(255,255,255,0.03); border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,0.06);">
+            <div style="font-size: 26px; font-weight: 800; color: var(--accent-purple); font-family: 'Outfit', sans-serif;">2 Min</div>
+            <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500;">Setup Time</div>
+          </div>
+        </div>
+
+        <!-- Trust indicators -->
+        <div style="margin-top: var(--space-2xl); display: flex; gap: var(--space-lg); justify-content: center;">
+          <div style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;"><span>🔒</span> 256-bit SSL</div>
+          <div style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;"><span>🛡️</span> SOC 2</div>
+          <div style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;"><span>🇮🇳</span> Made in India</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    function toggleAuth(view) {
+      document.getElementById('loginView').classList.toggle('hidden', view !== 'login');
+      document.getElementById('registerView').classList.toggle('hidden', view !== 'register');
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<span class="toast-icon">${icons[type]}</span><span class="toast-msg">${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100px)'; setTimeout(() => toast.remove(), 300); }, 4000);
+    }
+
+    // Password strength meter
+    function updateStrength(password) {
+      const fill = document.getElementById('strengthFill');
+      const label = document.getElementById('strengthLabel');
+      let strength = 0;
+      if (password.length >= 6) strength++;
+      if (password.length >= 10) strength++;
+      if (/[A-Z]/.test(password) && /[a-z]/.test(password)) strength++;
+      if (/[0-9]/.test(password)) strength++;
+      if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+      const levels = ['', 'weak', 'fair', 'good', 'strong', 'strong'];
+      const labels = ['Enter a password', 'Weak — add more characters', 'Fair — add numbers or symbols', 'Good — looking solid!', 'Strong — excellent password!', 'Strong — excellent password!'];
+
+      fill.className = 'strength-fill ' + (password.length > 0 ? levels[strength] : '');
+      label.textContent = labels[strength];
+      label.style.color = strength >= 4 ? 'var(--accent-primary)' : strength >= 3 ? 'var(--accent-blue)' : strength >= 2 ? 'var(--accent-orange)' : 'var(--text-muted)';
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;"></div> Signing in...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: document.getElementById('loginEmail').value,
+            password: document.getElementById('loginPassword').value
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          showToast('Welcome back! Redirecting...', 'success');
+          setTimeout(() => window.location.href = '/dashboard', 1000);
+        } else {
+          showToast(data.message || 'Invalid credentials', 'error');
+        }
+      } catch (err) {
+        showToast('Connection error. Please try again.', 'error');
+      }
+      btn.innerHTML = 'Sign In →';
+      btn.disabled = false;
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const btn = document.getElementById('registerBtn');
+      btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px;"></div> Creating...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: document.getElementById('regName').value,
+            email: document.getElementById('regEmail').value,
+            phone: document.getElementById('regPhone').value,
+            pan: document.getElementById('regPan').value,
+            password: document.getElementById('regPassword').value
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          showToast('Account created! Welcome aboard! 🎉', 'success');
+          setTimeout(() => window.location.href = '/dashboard', 1000);
+        } else {
+          showToast(data.message || 'Registration failed', 'error');
+        }
+      } catch (err) {
+        showToast('Connection error. Please try again.', 'error');
+      }
+      btn.innerHTML = 'Create Account →';
+      btn.disabled = false;
+    }
+
+    // Check if already logged in
+    if (localStorage.getItem('token')) {
+      window.location.href = '/dashboard';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — TaxSaver Pro</title>
+  <meta name="description" content="Your tax management dashboard. View tax overview, recent transactions, connected banks, and smart savings suggestions.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+</head>
+<body>
+  <div class="bg-animated">
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+  </div>
+
+  <!-- Sidebar Overlay (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">💰</div>
+      <h2>TaxSaver Pro</h2>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="sidebar-link active">
+        <span class="link-icon">📊</span> Dashboard
+      </a>
+      <a href="/calculator" class="sidebar-link">
+        <span class="link-icon">🧮</span> Tax Calculator
+      </a>
+      <a href="/bank-connect" class="sidebar-link">
+        <span class="link-icon">🏦</span> Bank Connect
+        <span class="link-badge">New</span>
+      </a>
+      <a href="/transactions" class="sidebar-link">
+        <span class="link-icon">💳</span> Transactions
+      </a>
+
+      <div style="margin-top: auto; padding-top: var(--space-lg);">
+        <a href="#" class="sidebar-link" onclick="logout()">
+          <span class="link-icon">🚪</span> Logout
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar" id="userAvatar">RS</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">User</div>
+          <div class="user-email" id="userEmail">user@email.com</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Mobile Toggle -->
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <div class="page-header animate-fade-in-up">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-md);">
+        <div>
+          <h1><span id="timeEmoji">👋</span> <span id="timeGreeting">Good day</span>, <span class="gradient-text" id="greeting">User</span></h1>
+          <p>Here's your tax overview for FY 2024-25</p>
+        </div>
+        <div style="display: flex; gap: var(--space-sm);">
+          <div style="padding: 8px 16px; background: var(--bg-glass-strong); border: 1px solid var(--border-color); border-radius: var(--radius-full); font-size: 12px; color: var(--text-muted); font-weight: 500;">
+            📅 FY 2024-25
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card green animate-fade-in-up delay-1">
+        <div class="stat-header">
+          <span class="stat-label">Total Income</span>
+          <div class="stat-icon">💰</div>
+        </div>
+        <div class="stat-value" id="statIncome" data-target="1200000">₹0</div>
+        <div class="stat-change positive">↑ This FY</div>
+      </div>
+      <div class="stat-card blue animate-fade-in-up delay-2">
+        <div class="stat-header">
+          <span class="stat-label">Tax Payable</span>
+          <div class="stat-icon">📋</div>
+        </div>
+        <div class="stat-value" id="statTax" data-target="117000">₹0</div>
+        <div class="stat-change positive">New Regime</div>
+      </div>
+      <div class="stat-card purple animate-fade-in-up delay-3">
+        <div class="stat-header">
+          <span class="stat-label">Deductions</span>
+          <div class="stat-icon">🏷️</div>
+        </div>
+        <div class="stat-value" id="statDeductions" data-target="250000">₹0</div>
+        <div class="stat-change positive">↑ 80C + 80D</div>
+      </div>
+      <div class="stat-card orange animate-fade-in-up delay-4">
+        <div class="stat-header">
+          <span class="stat-label">Connected Banks</span>
+          <div class="stat-icon">🏦</div>
+        </div>
+        <div class="stat-value" id="statBanks">0</div>
+        <div class="stat-change"><a href="/bank-connect" style="color: var(--accent-orange);">Connect Now →</a></div>
+      </div>
+    </div>
+
+    <!-- Grid: Chart + Quick Actions -->
+    <div class="grid-2" style="margin-bottom: var(--space-2xl);">
+      <!-- Tax Breakdown Chart -->
+      <div class="card animate-fade-in-up delay-3">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-lg);">
+          <h3>Tax Breakdown</h3>
+          <span class="badge badge-info">FY 2024-25</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: var(--space-xl);">
+          <div class="donut-chart" id="donutChart">
+            <svg viewBox="0 0 200 200">
+              <circle cx="100" cy="100" r="80" stroke="rgba(16, 185, 129, 0.15)" stroke-dasharray="502" stroke-dashoffset="0"></circle>
+              <circle cx="100" cy="100" r="80" stroke="hsl(160, 84%, 39%)" stroke-dasharray="301 201" stroke-dashoffset="0" style="transition: stroke-dasharray 1.5s ease-out;"></circle>
+              <circle cx="100" cy="100" r="80" stroke="hsl(217, 91%, 60%)" stroke-dasharray="100 402" stroke-dashoffset="-301" style="transition: stroke-dasharray 1.5s ease-out;"></circle>
+              <circle cx="100" cy="100" r="80" stroke="hsl(258, 90%, 66%)" stroke-dasharray="50 452" stroke-dashoffset="-401" style="transition: stroke-dasharray 1.5s ease-out;"></circle>
+              <circle cx="100" cy="100" r="80" stroke="hsl(38, 92%, 50%)" stroke-dasharray="51 451" stroke-dashoffset="-451" style="transition: stroke-dasharray 1.5s ease-out;"></circle>
+            </svg>
+            <div class="center-label">
+              <div class="amount">₹1.17L</div>
+              <div class="sub">Total Tax</div>
+            </div>
+          </div>
+          <div style="flex: 1;">
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 12px; height: 12px; border-radius: 4px; background: hsl(160, 84%, 39%); box-shadow: 0 0 8px hsla(160, 84%, 39%, 0.4);"></div>
+                <span style="flex: 1; font-size: 13px; color: var(--text-secondary);">Base Tax</span>
+                <span style="font-size: 13px; font-weight: 600; font-family: 'Outfit', sans-serif;">₹91,000</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 12px; height: 12px; border-radius: 4px; background: hsl(217, 91%, 60%); box-shadow: 0 0 8px hsla(217, 91%, 60%, 0.4);"></div>
+                <span style="flex: 1; font-size: 13px; color: var(--text-secondary);">Cess (4%)</span>
+                <span style="font-size: 13px; font-weight: 600; font-family: 'Outfit', sans-serif;">₹3,640</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 12px; height: 12px; border-radius: 4px; background: hsl(258, 90%, 66%); box-shadow: 0 0 8px hsla(258, 90%, 66%, 0.4);"></div>
+                <span style="flex: 1; font-size: 13px; color: var(--text-secondary);">Rebate</span>
+                <span style="font-size: 13px; font-weight: 600; font-family: 'Outfit', sans-serif;">₹0</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="width: 12px; height: 12px; border-radius: 4px; background: hsl(38, 92%, 50%); box-shadow: 0 0 8px hsla(38, 92%, 50%, 0.4);"></div>
+                <span style="flex: 1; font-size: 13px; color: var(--text-secondary);">Surcharge</span>
+                <span style="font-size: 13px; font-weight: 600; font-family: 'Outfit', sans-serif;">₹0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card animate-fade-in-up delay-4">
+        <h3 style="margin-bottom: var(--space-lg);">Quick Actions</h3>
+        <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+          <a href="/calculator" class="btn btn-secondary w-full" style="justify-content: flex-start;">
+            🧮 &nbsp; Calculate Your Tax
+          </a>
+          <a href="/bank-connect" class="btn btn-secondary w-full" style="justify-content: flex-start;">
+            🏦 &nbsp; Connect a Bank Account
+          </a>
+          <a href="/transactions" class="btn btn-secondary w-full" style="justify-content: flex-start;">
+            💳 &nbsp; View Transactions
+          </a>
+          <button class="btn btn-primary w-full" onclick="showSuggestions()">
+            💡 Get Tax Saving Tips
+          </button>
+        </div>
+
+        <div style="margin-top: var(--space-lg); padding: var(--space-lg); background: var(--accent-primary-subtle); border-radius: var(--radius-lg); border: 1px solid hsla(160, 84%, 39%, 0.12);">
+          <div style="font-size: 12px; font-weight: 700; color: var(--accent-primary); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">💡 Insight of the Day</div>
+          <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;" id="tipContent">Invest ₹50,000 in NPS under Section 80CCD(1B) for an additional deduction beyond the ₹1.5L limit of 80C!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Connected Banks -->
+    <div class="card animate-fade-in-up delay-5" style="margin-bottom: var(--space-2xl);">
+      <div class="flex items-center justify-between" style="margin-bottom: var(--space-lg);">
+        <h3>Connected Banks</h3>
+        <a href="/bank-connect" class="btn btn-sm btn-secondary">+ Connect New</a>
+      </div>
+      <div id="connectedBanks">
+        <div class="empty-state">
+          <div class="empty-icon">🏦</div>
+          <h3>No Banks Connected</h3>
+          <p>Connect your bank accounts to auto-import transactions and track tax deductions.</p>
+          <a href="/bank-connect" class="btn btn-primary" style="margin-top: var(--space-lg);">Connect Bank →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="card animate-fade-in-up delay-6">
+      <div class="flex items-center justify-between" style="margin-bottom: var(--space-lg);">
+        <h3>Recent Transactions</h3>
+        <a href="/transactions" class="btn btn-sm btn-ghost">View All →</a>
+      </div>
+      <div id="recentTransactions">
+        <div class="empty-state">
+          <div class="empty-icon">💳</div>
+          <h3>No Transactions Yet</h3>
+          <p>Connect a bank to see your transactions here automatically.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Suggestions Modal -->
+    <div class="modal-overlay" id="suggestionsModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>💡 Tax Saving Suggestions</h3>
+          <button class="modal-close" onclick="closeSuggestions()">✕</button>
+        </div>
+        <div id="suggestionsContent" style="display: flex; flex-direction: column; gap: var(--space-md);"></div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // Check auth
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!token) window.location.href = '/login';
+
+    // Time-based greeting
+    const hour = new Date().getHours();
+    let greeting = 'Good day', emoji = '👋';
+    if (hour < 6) { greeting = 'Good night'; emoji = '🌙'; }
+    else if (hour < 12) { greeting = 'Good morning'; emoji = '☀️'; }
+    else if (hour < 17) { greeting = 'Good afternoon'; emoji = '🌤️'; }
+    else if (hour < 21) { greeting = 'Good evening'; emoji = '🌅'; }
+    else { greeting = 'Good night'; emoji = '🌙'; }
+    document.getElementById('timeGreeting').textContent = greeting;
+    document.getElementById('timeEmoji').textContent = emoji;
+
+    // Set user info
+    if (user.name) {
+      document.getElementById('greeting').textContent = user.name.split(' ')[0];
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    }
+
+    // Animated stat counters
+    function animateStatCounter(el, target) {
+      const duration = 1800;
+      const start = performance.now();
+
+      function update(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 4);
+        const current = Math.floor(target * eased);
+        el.textContent = '₹' + current.toLocaleString('en-IN');
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    // Observe stat cards for counter animation
+    const statObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.target.dataset.target) {
+          animateStatCounter(entry.target, parseInt(entry.target.dataset.target));
+          statObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.stat-value[data-target]').forEach(el => statObserver.observe(el));
+
+    // Daily tips rotation
+    const tips = [
+      "Invest ₹50,000 in NPS under Section 80CCD(1B) for an additional deduction beyond the ₹1.5L limit of 80C!",
+      "Medical insurance premium for parents (Section 80D) can save you up to ₹25,000 in taxes!",
+      "Home loan interest up to ₹2,00,000 is deductible under Section 24(b) — don't miss it!",
+      "ELSS funds have the shortest lock-in of 3 years among 80C investments and offer market-linked returns.",
+      "If you pay rent, claim HRA exemption — it can be one of your biggest deductions under the Old Regime."
+    ];
+    document.getElementById('tipContent').textContent = tips[new Date().getDay() % tips.length];
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+
+    function showToast(msg, type = 'info') {
+      const c = document.getElementById('toastContainer');
+      const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+      const t = document.createElement('div');
+      t.className = `toast ${type}`;
+      t.innerHTML = `<span class="toast-icon">${icons[type]}</span><span class="toast-msg">${msg}</span>`;
+      c.appendChild(t);
+      setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 4000);
+    }
+
+    // Load connected banks
+    async function loadBanks() {
+      try {
+        const res = await fetch('/api/bank/accounts');
+        const accounts = await res.json();
+        document.getElementById('statBanks').textContent = accounts.length;
+        const container = document.getElementById('connectedBanks');
+
+        if (accounts.length > 0) {
+          container.innerHTML = accounts.map(acc => `
+            <div class="connected-account" style="margin-bottom: var(--space-md);">
+              <div class="account-logo" style="background: ${acc.color};">${acc.shortName}</div>
+              <div class="account-info">
+                <div class="account-name">${acc.bankName}</div>
+                <div class="account-number">${acc.accountNumber} • ${acc.ifsc}</div>
+              </div>
+              <div class="account-balance">
+                <div class="balance-amount">₹${Number(acc.balance).toLocaleString('en-IN')}</div>
+                <div class="balance-label">Balance</div>
+              </div>
+              <span class="badge badge-success">Connected</span>
+            </div>
+          `).join('');
+        }
+      } catch(e) {}
+    }
+
+    // Load recent transactions
+    async function loadTransactions() {
+      try {
+        const res = await fetch('/api/bank/transactions');
+        const txns = await res.json();
+        const container = document.getElementById('recentTransactions');
+
+        if (txns.length > 0) {
+          container.innerHTML = txns.slice(0, 5).map(txn => {
+            const date = new Date(txn.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+            const isCredit = txn.type === 'credit';
+            return `
+              <div class="txn-row">
+                <div class="txn-icon ${txn.type}">${isCredit ? '↓' : '↑'}</div>
+                <div class="txn-details">
+                  <div class="txn-title">${txn.description}</div>
+                  <div class="txn-meta">
+                    <span>${txn.merchant || txn.category}</span>
+                    <span>•</span>
+                    <span>${date}</span>
+                    ${txn.taxDeductible ? '<span class="badge badge-success" style="padding: 2px 8px; font-size: 10px;">Tax Deductible</span>' : ''}
+                  </div>
+                </div>
+                <div class="txn-amount ${txn.type}">
+                  ${isCredit ? '+' : '-'}₹${Number(txn.amount).toLocaleString('en-IN')}
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      } catch(e) {}
+    }
+
+    // Suggestions
+    async function showSuggestions() {
+      document.getElementById('suggestionsModal').classList.add('active');
+      try {
+        const res = await fetch('/api/tax/suggestions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ grossIncome: 1200000, deductions: { '80C': 100000, '80D': 15000 } })
+        });
+        const suggestions = await res.json();
+        document.getElementById('suggestionsContent').innerHTML = suggestions.map(s => `
+          <div class="suggestion-card ${s.priority}">
+            <div class="suggestion-icon">${s.icon}</div>
+            <div class="suggestion-content">
+              <h4>${s.title}</h4>
+              <p>${s.description}</p>
+              ${s.potentialSaving > 0 ? `<div class="suggestion-saving">💰 Potential saving: ₹${s.potentialSaving.toLocaleString('en-IN')}</div>` : ''}
+            </div>
+          </div>
+        `).join('');
+      } catch(e) {
+        document.getElementById('suggestionsContent').innerHTML = '<p style="color: var(--text-muted);">Could not load suggestions.</p>';
+      }
+    }
+
+    function closeSuggestions() {
+      document.getElementById('suggestionsModal').classList.remove('active');
+    }
+
+    // Init
+    loadBanks();
+    loadTransactions();
+  </script>
+</body>
+</html>

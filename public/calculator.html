@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tax Calculator — TaxSaver Pro</title>
+  <meta name="description" content="Compare Old vs New tax regime instantly. Calculate your income tax with section-wise deductions for FY 2024-25.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>">
+</head>
+<body>
+  <div class="bg-animated"><div class="bg-orb bg-orb-1"></div><div class="bg-orb bg-orb-2"></div></div>
+
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">💰</div>
+      <h2>TaxSaver Pro</h2>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/dashboard" class="sidebar-link"><span class="link-icon">📊</span> Dashboard</a>
+      <a href="/calculator" class="sidebar-link active"><span class="link-icon">🧮</span> Tax Calculator</a>
+      <a href="/bank-connect" class="sidebar-link"><span class="link-icon">🏦</span> Bank Connect <span class="link-badge">New</span></a>
+      <a href="/transactions" class="sidebar-link"><span class="link-icon">💳</span> Transactions</a>
+      <div style="margin-top: auto; padding-top: var(--space-lg);">
+        <a href="#" class="sidebar-link" onclick="logout()"><span class="link-icon">🚪</span> Logout</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="avatar" id="userAvatar">U</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">User</div>
+          <div class="user-email" id="userEmail">user@email.com</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+
+    <div class="page-header animate-fade-in-up">
+      <h1>🧮 Tax <span class="gradient-text">Calculator</span></h1>
+      <p>Compare Old vs New regime and find the best option for FY 2024-25</p>
+    </div>
+
+    <!-- Income Input Section -->
+    <div class="card animate-fade-in-up delay-1" style="margin-bottom: var(--space-xl);">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-lg);">
+        <h3>💰 Gross Annual Income</h3>
+        <span class="badge badge-info">FY 2024-25</span>
+      </div>
+      <div class="input-group">
+        <div style="display: flex; align-items: center; gap: var(--space-lg);">
+          <div style="font-size: 32px; font-weight: 900; color: var(--accent-primary); font-family: 'Outfit', sans-serif; min-width: 220px; letter-spacing: -0.03em;" id="incomeDisplay">₹12,00,000</div>
+          <input type="range" class="range-slider" id="incomeSlider" min="0" max="50000000" step="50000" value="1200000" oninput="updateIncome(this.value)">
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-top: 6px; font-weight: 500;">
+          <span>₹0</span>
+          <span>₹5 Crore</span>
+        </div>
+      </div>
+      <div style="margin-top: var(--space-lg);">
+        <label style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Or enter manually</label>
+        <input type="number" class="input" id="incomeInput" value="1200000" placeholder="Enter annual income" 
+               style="max-width: 320px; margin-top: var(--space-sm);" 
+               oninput="updateFromInput(this.value)">
+      </div>
+    </div>
+
+    <!-- Deductions Section (Old Regime) -->
+    <div class="card animate-fade-in-up delay-2" style="margin-bottom: var(--space-xl);">
+      <div class="flex items-center justify-between" style="margin-bottom: var(--space-lg);">
+        <div>
+          <h3>🏷️ Deductions (Old Regime)</h3>
+          <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">These deductions apply only under the Old Tax Regime</p>
+        </div>
+        <div style="font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; color: var(--accent-purple); letter-spacing: -0.02em;" id="totalDeductions">₹0</div>
+      </div>
+
+      <div class="deduction-grid" id="deductionGrid">
+        <!-- Dynamically populated -->
+      </div>
+    </div>
+
+    <!-- Tax Comparison Results -->
+    <div class="animate-fade-in-up delay-3" style="margin-bottom: var(--space-xl);">
+      <h3 style="margin-bottom: var(--space-lg);">📊 Regime Comparison</h3>
+      
+      <!-- Savings Banner -->
+      <div id="savingsBanner" class="card card-gradient" style="margin-bottom: var(--space-lg); text-align: center; padding: var(--space-2xl);">
+        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;">You could save</div>
+        <div style="font-family: 'Outfit', sans-serif; font-size: 48px; font-weight: 900; letter-spacing: -0.03em;" id="savingsAmount">₹0</div>
+        <div style="font-size: 15px; color: var(--text-secondary); margin-top: var(--space-sm);" id="savingsMessage">Enter your income to compare</div>
+      </div>
+
+      <div class="regime-comparison" id="regimeCards">
+        <!-- New Regime -->
+        <div class="regime-card" id="newRegimeCard">
+          <div class="regime-title">🆕 New Tax Regime</div>
+          <div class="regime-tax" id="newTax" style="color: var(--accent-blue);">₹0</div>
+          <div class="regime-rate">Effective Rate: <span id="newRate">0%</span></div>
+          <div style="text-align: left; margin-top: var(--space-lg);">
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); font-size: 13px;">
+              <span style="color: var(--text-secondary);">Taxable Income</span>
+              <span id="newTaxable" style="font-weight: 600; font-family: 'Outfit', sans-serif;">₹0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); font-size: 13px;">
+              <span style="color: var(--text-secondary);">Standard Deduction</span>
+              <span id="newSD" style="font-weight: 600; font-family: 'Outfit', sans-serif;">₹75,000</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); font-size: 13px;">
+              <span style="color: var(--text-secondary);">Base Tax</span>
+              <span id="newBase" style="font-weight: 600; font-family: 'Outfit', sans-serif;">₹0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); font-size: 13px;">
+              <span style="color: var(--text-secondary);">Rebate (87A)</span>
+              <span id="newRebate" style="font-weight: 600; color: var(--accent-primary); font-family: 'Outfit', sans-serif;">₹0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 13px;">
+              <span style="color: var(--text-secondary);">Cess (4%)</span>
+              <span id="newCess" style="font-weight: 600; font-family: 'Outfit', sans-serif;">₹0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Old Regime -->
+        <div class="regime-card" id="oldRegimeCard">
+          <div class="regime-title">📜 Old Tax Regime</div>
+          <div class="regime-tax" id="oldTax" style="color: var(--accent-purple);">₹0</div>
+          <div class="regime-rate">Effective Rate: <span id="oldRate">0%</span></div>
+          <div style="text-align: left; margin-top: var(--space-lg);">
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); font-size: 13px;">
+              <span style="color: var(--text-secondary);">Taxable Income</span>
+              <span id="oldTaxable" style="font-weight: 600; font-family: 'Outfit', sans-serif;">₹0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); font-size: 13px;">
+              <span style="color: var(--text-secondary);">Total Deductions</span>
+              <span id="oldDeductions" style="font-weight: 600; color: var(--accent-primary); font-family: 'Outfit', sans-serif;">₹0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); font-size: 13px;">
+              <span style="color: var(--text-secondary);">Base Tax</span>
+              <span id="oldBase" style="font-weight: 600; font-family: 'Outfit', sans-serif;">₹0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-subtle); font-size: 13px;">
+              <span style="color: var(--text-secondary);">Rebate (87A)</span>
+              <span id="oldRebate" style="font-weight: 600; color: var(--accent-primary); font-family: 'Outfit', sans-serif;">₹0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 13px;">
+              <span style="color: var(--text-secondary);">Cess (4%)</span>
+              <span id="oldCess" style="font-weight: 600; font-family: 'Outfit', sans-serif;">₹0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tax Saving Suggestions -->
+    <div class="card animate-fade-in-up delay-4">
+      <h3 style="margin-bottom: var(--space-lg);">💡 Tax Saving Suggestions</h3>
+      <div id="suggestionsContainer" style="display: flex; flex-direction: column; gap: var(--space-md);">
+        <div class="empty-state" style="padding: var(--space-lg);">
+          <div class="spinner spinner-lg" style="margin: 0 auto var(--space-md);"></div>
+          <p>Loading suggestions...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Confetti Container -->
+  <div class="confetti-container" id="confettiContainer"></div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user.name) {
+      document.getElementById('userName').textContent = user.name;
+      document.getElementById('userEmail').textContent = user.email;
+      document.getElementById('userAvatar').textContent = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+
+    function formatCurrency(num) {
+      return '₹' + Number(num).toLocaleString('en-IN');
+    }
+
+    // Animated savings amount
+    function animateSavings(target) {
+      const el = document.getElementById('savingsAmount');
+      const duration = 1200;
+      const start = performance.now();
+      const startVal = parseInt(el.textContent.replace(/[^\d]/g, '')) || 0;
+
+      function update(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = Math.floor(startVal + (target - startVal) * eased);
+        el.textContent = formatCurrency(current);
+        
+        // Color based on savings
+        if (target > 0) {
+          el.style.color = 'var(--accent-primary)';
+        } else {
+          el.style.color = 'var(--text-muted)';
+        }
+        
+        if (progress < 1) requestAnimationFrame(update);
+      }
+      requestAnimationFrame(update);
+    }
+
+    // Confetti effect
+    function triggerConfetti() {
+      const container = document.getElementById('confettiContainer');
+      const colors = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ec4899', '#06b6d4'];
+      
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.cssText = `
+          position: absolute;
+          width: ${Math.random() * 8 + 4}px;
+          height: ${Math.random() * 8 + 4}px;
+          background: ${colors[Math.floor(Math.random() * colors.length)]};
+          border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+          left: ${Math.random() * 100}%;
+          top: -10px;
+          animation: confettiFall ${Math.random() * 2 + 1.5}s ease-out forwards;
+          transform: rotate(${Math.random() * 360}deg);
+        `;
+        container.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 3500);
+      }
+    }
+
+    // Add confetti keyframes
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes confettiFall {
+        0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(100vh) rotate(${Math.random() * 720}deg); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Deduction sections
+    const sections = {
+      '80C': { name: 'Section 80C', max: 150000, desc: 'PPF, ELSS, LIC, EPF, NSC, FDs', icon: '💰' },
+      '80CCD1B': { name: 'Section 80CCD(1B)', max: 50000, desc: 'Additional NPS contribution', icon: '🏦' },
+      '80D': { name: 'Section 80D', max: 75000, desc: 'Health Insurance Premium', icon: '🏥' },
+      '80E': { name: 'Section 80E', max: 500000, desc: 'Education Loan Interest', icon: '🎓' },
+      '80G': { name: 'Section 80G', max: 200000, desc: 'Charitable Donations', icon: '🤝' },
+      '80TTA': { name: 'Section 80TTA', max: 10000, desc: 'Savings Account Interest', icon: '🏧' },
+      'HRA': { name: 'HRA Exemption', max: 500000, desc: 'House Rent Allowance', icon: '🏠' },
+      'HomeLoanInterest': { name: 'Section 24(b)', max: 200000, desc: 'Home Loan Interest', icon: '🏡' }
+    };
+
+    const deductions = {};
+
+    // Build deduction grid
+    const grid = document.getElementById('deductionGrid');
+    for (const [key, sec] of Object.entries(sections)) {
+      deductions[key] = 0;
+      grid.innerHTML += `
+        <div class="deduction-item">
+          <div class="deduction-header">
+            <span class="deduction-section">${sec.icon} ${sec.name}</span>
+            <span class="deduction-limit">Max: ${formatCurrency(sec.max)}</span>
+          </div>
+          <div class="deduction-desc">${sec.desc}</div>
+          <input type="number" class="input" placeholder="₹0" value="0" min="0" max="${sec.max}"
+                 style="font-size: 13px; padding: 10px 14px;"
+                 oninput="updateDeduction('${key}', this.value)">
+        </div>
+      `;
+    }
+
+    function updateDeduction(section, value) {
+      deductions[section] = Number(value) || 0;
+      const total = Object.values(deductions).reduce((a, b) => a + b, 0);
+      document.getElementById('totalDeductions').textContent = formatCurrency(total);
+      calculateTax();
+    }
+
+    function updateIncome(val) {
+      document.getElementById('incomeDisplay').textContent = formatCurrency(val);
+      document.getElementById('incomeInput').value = val;
+      calculateTax();
+    }
+
+    function updateFromInput(val) {
+      const v = Number(val) || 0;
+      document.getElementById('incomeDisplay').textContent = formatCurrency(v);
+      document.getElementById('incomeSlider').value = Math.min(v, 50000000);
+      calculateTax();
+    }
+
+    let lastSavings = 0;
+
+    async function calculateTax() {
+      const grossIncome = Number(document.getElementById('incomeInput').value) || 0;
+
+      try {
+        const res = await fetch('/api/tax/compare', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ grossIncome, deductions })
+        });
+        const data = await res.json();
+
+        // New regime
+        document.getElementById('newTax').textContent = formatCurrency(data.newRegime.totalTax);
+        document.getElementById('newRate').textContent = data.newRegime.effectiveRate + '%';
+        document.getElementById('newTaxable').textContent = formatCurrency(data.newRegime.taxableIncome);
+        document.getElementById('newSD').textContent = formatCurrency(data.newRegime.standardDeduction);
+        document.getElementById('newBase').textContent = formatCurrency(data.newRegime.baseTax);
+        document.getElementById('newRebate').textContent = formatCurrency(data.newRegime.rebate);
+        document.getElementById('newCess').textContent = formatCurrency(data.newRegime.cess);
+
+        // Old regime
+        document.getElementById('oldTax').textContent = formatCurrency(data.oldRegime.totalTax);
+        document.getElementById('oldRate').textContent = data.oldRegime.effectiveRate + '%';
+        document.getElementById('oldTaxable').textContent = formatCurrency(data.oldRegime.taxableIncome);
+        document.getElementById('oldDeductions').textContent = formatCurrency(data.oldRegime.totalDeductions + data.oldRegime.standardDeduction);
+        document.getElementById('oldBase').textContent = formatCurrency(data.oldRegime.baseTax);
+        document.getElementById('oldRebate').textContent = formatCurrency(data.oldRegime.rebate);
+        document.getElementById('oldCess').textContent = formatCurrency(data.oldRegime.cess);
+
+        // Animated savings
+        animateSavings(data.savings);
+        document.getElementById('savingsMessage').textContent = data.savingsMessage;
+
+        // Confetti on significant savings
+        if (data.savings > 50000 && lastSavings <= 50000) {
+          triggerConfetti();
+        }
+        lastSavings = data.savings;
+
+        // Highlight recommended
+        document.getElementById('newRegimeCard').classList.toggle('recommended', data.recommended === 'new');
+        document.getElementById('oldRegimeCard').classList.toggle('recommended', data.recommended === 'old');
+
+        // Load suggestions
+        loadSuggestions(grossIncome);
+      } catch(e) {
+        console.error('Calc error:', e);
+      }
+    }
+
+    async function loadSuggestions(income) {
+      try {
+        const res = await fetch('/api/tax/suggestions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ grossIncome: income, deductions })
+        });
+        const suggestions = await res.json();
+        document.getElementById('suggestionsContainer').innerHTML = suggestions.map(s => `
+          <div class="suggestion-card ${s.priority}">
+            <div class="suggestion-icon">${s.icon}</div>
+            <div class="suggestion-content">
+              <h4>${s.title}</h4>
+              <p>${s.description}</p>
+              ${s.potentialSaving > 0 ? `<div class="suggestion-saving">💰 Potential tax saving: ${formatCurrency(s.potentialSaving)}</div>` : ''}
+            </div>
+          </div>
+        `).join('');
+      } catch(e) {}
+    }
+
+    // Initial calculation
+    calculateTax();
+  </script>
+</body>
+</html>
